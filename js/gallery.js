@@ -64,42 +64,51 @@ const images = [
     },
 ];
 
-function createMarkup() {
+const gallery = document.querySelector("ul.gallery");
 
-    const li = document.createElement('li');
-    li.setAttribute('class', 'gallery-item');
+// Динамічне створення рощзмітки галереї
+const markup = images
+    .map((image) => `<li>
+                                <a class="gallery-link" target="_blank" href="${image.original}">
+                                    <img 
+                                        class="gallery-image" 
+                                        src="${image.preview}" 
+                                        data-source="${image.alt}" 
+                                        alt="${image.description}" />
+                                </a>
+                            </li>`
+    )
+    .join("");
 
-    const a = document.createElement('a');
-    a.setAttribute('class', 'gallery-link');
-    a.setAttribute('href', 'large-image.jpg');
-
-    const img = document.createElement('img');
-    img.setAttribute('class', 'gallery-image');
-    img.setAttribute('src', 'small-image.jpg');
-    img.setAttribute('alt', 'Image description');
-    img.dataset.source = 'large-image.jpg';
-
-    const ul = document.querySelector('ul.gallery');
-    ul.appendChild(li).appendChild(a).appendChild(img);
-
-
+gallery.insertAdjacentHTML("afterbegin", markup);
 
 
-    ul.addEventListener('click', (event) => {
-        //event.target.matches('.gallery-image')
-        console.log(event);
-    });
+const galleryLink = document.querySelector('a.gallery-link');
+console.log(galleryLink.href);
+galleryLink.addEventListener('click', function (event) {
+    event.preventDefault();
+});
+const galleryLinkImg = document.querySelector('a.gallery-link');
+galleryLinkImg.addEventListener('click', function (event) {
+    event.preventDefault();
+});
+
+
+gallery.addEventListener("click", selectPicture);
+
+function selectPicture(event) {
+    gallery.addEventListener('click', function (event) {
+        console.log("event.target: ", event.target);
+        console.log("event.currentTarget: ", event.currentTarget);
+    })
 }
-createMarkup()
 
-const instance = basicLightbox.create(`
-    <div class="modal">
-        <p style="display:block; color:white; text-align: center;">A custom modal.</p>
-        <a style="display:block; color:white; text-align: end;">Close</a>
-        <img src="https://cdn.pixabay.com/photo/2019/05/14/16/43/rchids-4202820_1280.jpg" width="800" height="600">
-        
-    </div>
-`, {
+
+const instance = basicLightbox.create(`<div class="modal">
+                                            <p style="display:block; color:white; text-align: center;">A custom modal.</p>
+                                            <a style="display:block; color:white; text-align: end;">Close</a>
+                                            <img src="https://cdn.pixabay.com/photo/2019/05/14/16/43/rchids-4202820_1280.jpg" width="800" height="600">
+                                        </div>`, {
     onShow: (instance) => {
         instance.element().querySelector('a').onclick = instance.close;
     }
