@@ -86,11 +86,6 @@ const markup = images
 gallery.insertAdjacentHTML("afterbegin", markup);
 
 
-// Заборонили поведінку по замовчуванню
-gallery.addEventListener('click', event => {
-    event.preventDefault();
-});
-
 //Використання методів бібліотеки для створення модельного вікна
 class Modal {
     showModal(imgSrc) {
@@ -108,17 +103,18 @@ const modalWindow = new Modal();
 
 //Делегування подій
 gallery.addEventListener('click', event => {
+    
     //Визначаємо на якому зображенні клікнлули
     const img = event.target;
 
     //Виводимо у консоль посилання на велике зображення із атрибуту data-source
-    console.log(img.dataset.source);
+    //console.log(img.dataset.source);
 
-
-    //Відображення модального вікна з великим зображенням
-    if (img.dataset.source) {
+    // Перевірк чи є цільовий елемент події click саме елементом <img>
+    if (img.tagName === "IMG") {
+        // Заборонили поведінку по замовчуванню
+        event.preventDefault();
+        //Відображення модального вікна з великим зображенням
         modalWindow.showModal(img.dataset.source);
-    } else {
-        console.log("Клік не по зображенню");
-    }
+    } 
 });
