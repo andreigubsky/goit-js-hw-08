@@ -64,54 +64,61 @@ const images = [
     },
 ];
 
+
 const gallery = document.querySelector("ul.gallery");
 
-// Динамічне створення рощзмітки галереї
+
+// Розмітка елементів галереї
 const markup = images
     .map((image) => `<li>
                                 <a class="gallery-link" target="_blank" href="${image.original}">
                                     <img 
                                         class="gallery-image" 
                                         src="${image.preview}" 
-                                        data-source="${image.alt}" 
+                                        data-source="${image.original}" 
                                         alt="${image.description}" />
                                 </a>
                             </li>`
     )
     .join("");
 
+// Динамічне створення рощзмітки галереї
 gallery.insertAdjacentHTML("afterbegin", markup);
 
 
-const galleryLink = document.querySelector('a.gallery-link');
-console.log(galleryLink.href);
-galleryLink.addEventListener('click', function (event) {
-    event.preventDefault();
-});
-const galleryLinkImg = document.querySelector('a.gallery-link');
-galleryLinkImg.addEventListener('click', function (event) {
+// Заборонили поведінку по замовчуванню
+gallery.addEventListener('click', event => {
     event.preventDefault();
 });
 
-
-gallery.addEventListener("click", selectPicture);
-
-function selectPicture(event) {
-    gallery.addEventListener('click', function (event) {
-        console.log("event.target: ", event.target);
-        console.log("event.currentTarget: ", event.currentTarget);
-    })
-}
-
-
-const instance = basicLightbox.create(`<div class="modal">
-                                            <p style="display:block; color:white; text-align: center;">A custom modal.</p>
-                                            <a style="display:block; color:white; text-align: end;">Close</a>
-                                            <img src="https://cdn.pixabay.com/photo/2019/05/14/16/43/rchids-4202820_1280.jpg" width="800" height="600">
-                                        </div>`, {
-    onShow: (instance) => {
-        instance.element().querySelector('a').onclick = instance.close;
+//Використання методів бібліотеки для створення модельного вікна
+class Modal {
+    showModal(imgSrc) {
+        const instance = basicLightbox.create(`<div class="modal">
+                                                    <img class="modal-img" src=${imgSrc} width="100%" height="100%">
+                                               </div>`, {
+            onShow: (instance) => {
+                instance.element().querySelector('img').onclick = instance.close;
+            }
+        })
+        instance.show();
     }
-})
+};
+const modalWindow = new Modal();
 
-instance.show()
+//Делегування подій
+gallery.addEventListener('click', event => {
+    //Визначаємо на якому зображенні клікнлули
+    const img = event.target;
+
+    //Виводимо у консоль посилання на велике зображення із атрибуту data-source
+    console.log(img.dataset.source);
+
+
+    //Відображення модального вікна з великим зображенням
+    if (img.dataset.source) {
+        modalWindow.showModal(img.dataset.source);
+    } else {
+        console.log("Клік не по зображенню");
+    }
+});
